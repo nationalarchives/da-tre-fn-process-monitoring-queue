@@ -29,7 +29,12 @@ object SQSUtils {
 
   
   def batchDeleteMessages(queueUrl: String, messages: Seq[Message]): DeleteMessageBatchResponse = {
-    val entries = messages.map(m => DeleteMessageBatchRequestEntry.builder().receiptHandle(m.receiptHandle()).build())
+    val entries = messages.map { m => 
+      DeleteMessageBatchRequestEntry.builder()
+        .receiptHandle(m.receiptHandle())
+        .id(m.messageId())
+        .build()
+    }
     val deleteMessageBatchRequest = DeleteMessageBatchRequest.builder()
       .queueUrl(queueUrl)
       .entries(entries.asJavaCollection)
