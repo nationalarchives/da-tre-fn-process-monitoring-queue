@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
 
 import scala.sys.env
+import scala.util.Try
 
 class LambdaHandler() extends RequestHandler[ScheduledEvent, Unit] {
 
@@ -12,9 +13,14 @@ class LambdaHandler() extends RequestHandler[ScheduledEvent, Unit] {
     context.getLogger.log(s"Scheduled event received: $event")
     val monitoringQueueArn = env("MONITORING_QUEUE_ARN")
     val monitoringQueueUrl = SQSUtils.deriveQueueUrl(monitoringQueueArn)
-    val messages = SQSUtils.receiveAllMessages(monitoringQueueUrl)
-    messages.foreach(m => context.getLogger.log(s"Received message: ${m.body()} \n"))
-    SQSUtils.batchDeleteMessages(monitoringQueueUrl, messages)
-    SQSUtils.closeClient()
+    Try(SQSUtils.receiveAllMessages(monitoringQueueUrl))
+      .fold(
+        t => context.getLogger.log(s"Something went wrong here: ${t.toString}"),
+        messages => {
+          messages.foreach(m => context.getLogger.log(s"Received message: ${m.body()} \n"))
+          SQSUtils.batchDeleteMessages(monitoringQueueUrl, messages)
+          SQSUtils.closeClient()
+        }
+      )
   }
 }
