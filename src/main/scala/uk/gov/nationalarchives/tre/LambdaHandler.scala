@@ -13,13 +13,13 @@ class LambdaHandler() extends RequestHandler[ScheduledEvent, Unit] {
     val monitoringQueueArn = env("MONITORING_QUEUE_ARN")
     val monitoringQueueUrl = SQSUtils.deriveQueueUrl(monitoringQueueArn)
     val messages = SQSUtils.receiveAllMessages(monitoringQueueUrl)
-    
+    messages.foreach(m => s"Message found: ${m.body()}\n")
     val slackEndpoints = parseStringMap(env("NOTIFIABLE_SLACK_MONITORING_ENDPOINTS"))
-    
-    context.getLogger.log(s"Slack endpoints")
     
     val httpClient = HttpClients.createDefault()
     val slackUtils = new SlackUtils(httpClient)
+    val matchedMessages = SlackMessageBuilder.matchMessages(messages.map(_.body()))
+    matchedMessages.foreach(m => context.getLogger.log(s"Matched message built: $m"))
     val messageText = SlackMessageBuilder.buildSlackMessage(SlackMessageBuilder.matchMessages(messages.map(_.body())))
     
     context.getLogger.log(s"Message text: $messageText")    
