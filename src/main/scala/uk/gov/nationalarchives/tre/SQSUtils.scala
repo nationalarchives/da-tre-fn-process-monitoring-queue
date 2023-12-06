@@ -27,9 +27,9 @@ object SQSUtils {
     }
   }
 
-  
+
   def batchDeleteMessages(queueUrl: String, messages: Seq[Message]): Unit = {
-    val entries = messages.map { m => 
+    val entries = messages.map { m =>
       DeleteMessageBatchRequestEntry.builder()
         .receiptHandle(m.receiptHandle())
         .id(m.messageId())
@@ -43,7 +43,7 @@ object SQSUtils {
       sqsClient.deleteMessageBatch(deleteMessageBatchRequest)
     }
   }
-  
+
   def closeClient(): Unit = sqsClient.close()
   def deriveQueueUrl(queueArn: String): String = {
     val accountId: String = queueArn.split(":")(4)
