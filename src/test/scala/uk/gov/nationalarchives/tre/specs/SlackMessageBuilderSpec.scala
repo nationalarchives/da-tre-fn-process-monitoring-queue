@@ -54,7 +54,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
           )
         )
       )
-    ) shouldBe ":warning: Processed *1* requests with errors, references: FCL-NR"
+    ) shouldBe ":warning:  Processed *1* requests with errors, references: FCL-NR"
   }
 
   "buildSlackMessage" should "build the expected string for a parse with no errors" in {
@@ -99,7 +99,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
           )
         )
       )
-    ) shouldBe ":tada: Processed *1* requests with no errors"
+    ) shouldBe ":white_check_mark:  Processed *1* requests with no errors"
   }
 
   "buildSlackMessage" should "build the expected string where no out message has been found" in {
@@ -126,6 +126,6 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
           None
         )
       )
-    ) shouldBe ":interrobang: *1* requests found with no package available message, references: FCL-NR"
+    ) shouldBe ":interrobang:  *1* requests found with no package available message, references: FCL-NR"
   }
 }

@@ -1,12 +1,11 @@
 package uk.gov.nationalarchives.tre
 
 import io.circe.generic.auto._
-import io.circe.{Decoder, HCursor, parser}
+import io.circe.{Decoder, parser}
 import uk.gov.nationalarchives.common.messages.{Producer, Properties}
 import uk.gov.nationalarchives.da.messages.bag.available.{BagAvailable, ConsignmentType}
 import uk.gov.nationalarchives.da.messages.courtdocumentpackage.available.{CourtDocumentPackageAvailable, Status => CDPAStatus}
 import uk.gov.nationalarchives.da.messages.request.courtdocument.parse.RequestCourtDocumentParse
-import uk.gov.nationalarchives.tre.messages.treerror.{Parameters, TreError, Status => TEStatus}
 
 object MessageParsingUtils {
   implicit val producerDecoder: Decoder[Producer.Value] = Decoder.decodeEnumeration(Producer)

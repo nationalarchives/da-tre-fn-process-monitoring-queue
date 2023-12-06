@@ -28,18 +28,20 @@ object SQSUtils {
   }
 
   
-  def batchDeleteMessages(queueUrl: String, messages: Seq[Message]): DeleteMessageBatchResponse = {
+  def batchDeleteMessages(queueUrl: String, messages: Seq[Message]): Unit = {
     val entries = messages.map { m => 
       DeleteMessageBatchRequestEntry.builder()
         .receiptHandle(m.receiptHandle())
         .id(m.messageId())
         .build()
     }
-    val deleteMessageBatchRequest = DeleteMessageBatchRequest.builder()
-      .queueUrl(queueUrl)
-      .entries(entries.asJavaCollection)
-      .build()
-    sqsClient.deleteMessageBatch(deleteMessageBatchRequest)
+    entries.grouped(10).foreach { batchedEntries =>
+      val deleteMessageBatchRequest = DeleteMessageBatchRequest.builder()
+        .queueUrl(queueUrl)
+        .entries(batchedEntries.asJavaCollection)
+        .build()
+      sqsClient.deleteMessageBatch(deleteMessageBatchRequest)
+    }
   }
   
   def closeClient(): Unit = sqsClient.close()
