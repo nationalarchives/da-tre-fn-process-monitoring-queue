@@ -16,7 +16,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
     SlackMessageBuilder.buildSlackMessage(
       Seq(
         MatchedMessages(
-          Right(
+          messageIn = Right(
             RequestCourtDocumentParse(
               Properties(
                 messageType = "uk.gov.nationalarchives.da.messages.request.courtdocument.parse.RequestCourtDocumentParse",
@@ -33,7 +33,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
                 originator = Some("FCL"),
                 parserInstructions = ParserInstructions("judgment")))
           ),
-          Some(
+          messageOut = Some(
             CourtDocumentPackageAvailable(
               Properties(
                 messageType = "uk.gov.nationalarchives.da.messages.courtdocumentpackage.available.CourtDocumentPackageAvailable",
@@ -61,7 +61,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
     SlackMessageBuilder.buildSlackMessage(
       Seq(
         MatchedMessages(
-          Right(
+          messageIn = Right(
             RequestCourtDocumentParse(
               Properties(
                 messageType = "uk.gov.nationalarchives.da.messages.request.courtdocument.parse.RequestCourtDocumentParse",
@@ -78,7 +78,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
                 originator = Some("FCL"),
                 parserInstructions = ParserInstructions("judgment")))
           ),
-          Some(
+          messageOut = Some(
             CourtDocumentPackageAvailable(
               Properties(
                 messageType = "uk.gov.nationalarchives.da.messages.courtdocumentpackage.available.CourtDocumentPackageAvailable",
@@ -106,7 +106,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
     SlackMessageBuilder.buildSlackMessage(
       Seq(
         MatchedMessages(
-          Right(
+          messageIn = Right(
             RequestCourtDocumentParse(
               Properties(
                 messageType = "uk.gov.nationalarchives.da.messages.request.courtdocument.parse.RequestCourtDocumentParse",
@@ -123,7 +123,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
                 originator = Some("FCL"),
                 parserInstructions = ParserInstructions("judgment")))
           ),
-          None
+          messageOut = None
         )
       )
     ) shouldBe ":interrobang:  *1* requests found with no package available message, references: FCL-NR"
