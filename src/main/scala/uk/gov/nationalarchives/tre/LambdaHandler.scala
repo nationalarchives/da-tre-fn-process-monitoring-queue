@@ -1,16 +1,26 @@
 package uk.gov.nationalarchives.tre
 
-import com.amazonaws.services.lambda.runtime.events.{LambdaDestinationEvent, SNSEvent, SQSEvent}
+import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
+import org.apache.http.impl.client.HttpClients
+import uk.gov.nationalarchives.tre.MessageParsingUtils.parseStringMap
 
-class LambdaHandler[Event]() extends RequestHandler[Event, Unit] {
+import scala.sys.env
 
-  override def handleRequest(event: Event, context: Context): Unit = {
-    event match {
-      case snsEvent: SNSEvent => SNSEventHandler.logEvent(snsEvent, context.getLogger)
-      case lambdaDestinationEvent: LambdaDestinationEvent => DestinationEventHandler.logEvent(lambdaDestinationEvent, context.getLogger)
-      case sqsEvent: SQSEvent => SQSEventHandler.logEvent(sqsEvent, context.getLogger)
-      case _=> throw new NotImplementedError(s"Unrecognised lambda event")
-    }
+class LambdaHandler() extends RequestHandler[ScheduledEvent, Unit] {
+
+  override def handleRequest(event: ScheduledEvent, context: Context): Unit = {
+    val monitoringQueueArn = env("MONITORING_QUEUE_ARN")
+    val monitoringQueueUrl = SQSUtils.deriveQueueUrl(monitoringQueueArn)
+    val messages = SQSUtils.receiveAllMessages(monitoringQueueUrl)
+    val messageText = SlackMessageBuilder.buildSlackMessage(SlackMessageBuilder.matchMessages(messages.map(_.body())))
+
+    val slackEndpoints = parseStringMap(env("NOTIFIABLE_SLACK_MONITORING_ENDPOINTS"))
+    val httpClient = HttpClients.createDefault()
+    val slackUtils = new SlackUtils(httpClient)
+    slackEndpoints.foreach { case (c, wh) => slackUtils.postMessage(wh, messageText, c, "monitoring-lambda") }
+
+    SQSUtils.batchDeleteMessages(monitoringQueueUrl, messages)
+    SQSUtils.closeClient()
   }
 }
