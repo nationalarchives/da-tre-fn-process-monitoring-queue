@@ -2,6 +2,7 @@ package uk.gov.nationalarchives.tre
 
 import uk.gov.nationalarchives.common.messages.Producer
 import uk.gov.nationalarchives.da.messages.bag.available.BagAvailable
+import uk.gov.nationalarchives.da.messages.bag.available.ConsignmentType.STANDARD
 import uk.gov.nationalarchives.da.messages.courtdocumentpackage.available.CourtDocumentPackageAvailable
 import uk.gov.nationalarchives.da.messages.courtdocumentpackage.available.Status.{COURT_DOCUMENT_PARSE_NO_ERRORS, COURT_DOCUMENT_PARSE_WITH_ERRORS}
 import uk.gov.nationalarchives.da.messages.request.courtdocument.parse.RequestCourtDocumentParse
@@ -26,7 +27,7 @@ object SlackMessageBuilder {
     }
     requestCourtDocumentParseMessages.map(rcdp => MatchedMessages(
       Right(rcdp), courtDocumentPackageAvailableMessages.find(_.parameters.reference == rcdp.parameters.reference))
-    ) ++ bagAvailableMessages.map(ba => MatchedMessages(
+    ) ++ bagAvailableMessages.filter(_.parameters.consignmentType != STANDARD).map(ba => MatchedMessages(
       Left(ba), courtDocumentPackageAvailableMessages.find(_.parameters.reference == ba.parameters.reference))
     )
   }

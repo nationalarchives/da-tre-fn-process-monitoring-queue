@@ -12,6 +12,54 @@ import uk.gov.nationalarchives.tre.{MatchedMessages, SlackMessageBuilder}
 
 class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
 
+  "matchMessages" should "not attempt to match messages with a standard consignment type" in {
+    val matchedMessages = SlackMessageBuilder.matchMessages(
+      Seq(
+        """
+          |{
+          |	  "properties" : {
+          |	      "messageType" : "uk.gov.nationalarchives.da.messages.bag.available.BagAvailable",
+          |       "timestamp" : "2023-11-06T15:15:08.443071Z",
+          |		    "function" : "",
+          |	      "producer" : "TDR",
+          |	      "executionId" : "",
+          |       "parentExecutionId" : null
+          |	  },
+          |	  "parameters" : {
+          |	      "reference" : "TDR-2021-CF6L",
+          |	      "originator" : "TDR",
+          |	      "consignmentType" : "COURT_DOCUMENT",
+          |	    	"s3Bucket" : "da-transform-sample-data",
+          |	      "s3BagKey" : "dc34c025-ca5c-4746-b89a-a05bb451d344/sample-data/judgment/tdr-bag/TDR-2021-CF6L.tar.gz",
+          |	      "s3BagSha256Key" : "TDR-2021-CF6L.tar.gz.sha256"
+          |	  }
+          |}
+          |""".stripMargin,
+        """
+          |{
+          |	  "properties" : {
+          |	      "messageType" : "uk.gov.nationalarchives.da.messages.bag.available.BagAvailable",
+          |       "timestamp" : "2023-11-06T15:15:08.443071Z",
+          |		    "function" : "",
+          |	      "producer" : "TDR",
+          |	      "executionId" : "",
+          |       "parentExecutionId" : null
+          |	  },
+          |	  "parameters" : {
+          |	      "reference" : "TDR-2021-CF6L",
+          |	      "originator" : "TDR",
+          |	      "consignmentType" : "STANDARD",
+          |	    	"s3Bucket" : "da-transform-sample-data",
+          |	      "s3BagKey" : "dc34c025-ca5c-4746-b89a-a05bb451d344/sample-data/judgment/tdr-bag/TDR-2021-CF6L.tar.gz",
+          |	      "s3BagSha256Key" : "TDR-2021-CF6L.tar.gz.sha256"
+          |	  }
+          |}
+          |""".stripMargin
+      )
+    )
+    matchedMessages.size shouldBe 1
+  }
+  
   "buildSlackMessage" should "build the expected string for a parse with errors" in {
     SlackMessageBuilder.buildSlackMessage(
       Seq(
