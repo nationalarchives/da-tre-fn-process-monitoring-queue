@@ -59,7 +59,7 @@ class SlackMessageBuilderSpec extends AnyFlatSpec with MockitoSugar {
     )
     matchedMessages.size shouldBe 1
   }
-  
+
   "buildSlackMessage" should "build the expected string for a parse with errors" in {
     SlackMessageBuilder.buildSlackMessage(
       Seq(
