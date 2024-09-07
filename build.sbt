@@ -33,7 +33,7 @@ libraryDependencies ++=Seq(
   "software.amazon.awssdk" % "sqs"
 ).map(_ % awsVersion)
 
-val circeVersion = "0.14.9"
+val circeVersion = "0.14.10"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
