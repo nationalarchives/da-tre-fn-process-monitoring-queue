@@ -1,6 +1,6 @@
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 ThisBuild / version := "0.1.0"
 
 lazy val root = (project in file("."))
@@ -33,7 +33,7 @@ libraryDependencies ++=Seq(
   "software.amazon.awssdk" % "sqs"
 ).map(_ % awsVersion)
 
-val circeVersion = "0.14.14"
+val circeVersion = "0.14.15"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
